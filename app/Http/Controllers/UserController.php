@@ -26,7 +26,7 @@ class UserController extends Controller
             return response()->json(['message' => 'Falha de validação'], 500);
         }
 
-        $user = User::create($validation);
+        $user = User::create($request->all());
 
         return response()->json($user);
     }
