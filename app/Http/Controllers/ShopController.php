@@ -16,7 +16,7 @@ class ShopController extends Controller
 
     public function store(Request $request)
     {
-        $validation = Validator([
+        $validation = Validator::make($request->all(), [
             'user_id' => 'required',
             'name' => 'required',
             'description' => 'required',
@@ -28,12 +28,18 @@ class ShopController extends Controller
             'image_url' => 'nullable'
         ]);
 
-        if($validation->fails()) {
-            return response()->json(['message' => 'A validação falhou!'], 500);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Erro de validação!',
+                'errors' => $validation->errors()
+            ], 422);
         }
 
         $shop = Shop::create($request->all());
-        return response()->json($shop);
+        return response()->json([
+            'message' => 'Cafeteria criada com sucesso!',
+            'shop' => $shop
+        ], 200);
     }
 
     public function show($id)
@@ -41,7 +47,7 @@ class ShopController extends Controller
         $shop = Shop::findOrFail($id);
 
         if(!$shop) {
-            return response()->json(['message' => 'Cafeteria não encontrada']);
+            return response()->json(['message' => 'Cafeteria não encontrada'], 404);
         }
 
         return response()->json($shop);
@@ -52,12 +58,15 @@ class ShopController extends Controller
         $shop = Shop::findOrFail($id);
 
         if(!$shop) {
-            return response()->json(['message' => 'Cafeteria não encontrada']);
+            return response()->json(['message' => 'Cafeteria não encontrada'], 404);
         }
 
         $shop->update($request->all());
 
-        return response()->json($shop);
+        return response()->json([
+            'message' => 'Cafeteria atualizado com sucesso!',
+            'shop' => $shop
+        ], 200);
     }
 
     public function delete($id)
@@ -65,11 +74,11 @@ class ShopController extends Controller
         $shop = Shop::findOrFail($id);
 
         if(!$shop) {
-            return response()->json(['message' => 'Cafeteria não encontrada']);
+            return response()->json(['message' => 'Cafeteria não encontrada'], 404);
         }
         
         $shop->delete();
 
-        return response()->json(['message' => 'Cafeteria deletada com sucesso!']);
+        return response()->json(['message' => 'Cafeteria deletada com sucesso!'], 200);
     }
 }

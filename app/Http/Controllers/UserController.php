@@ -16,19 +16,25 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        $validation = Validator([
+        $validation = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required',
             'password' => 'required'
         ]);
 
-        if($validation->fails()) {
-            return response()->json(['message' => 'Falha de validação'], 500);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Erro de validação!',
+                'errors' => $validation->errors()
+            ], 422);
         }
 
         $user = User::create($request->all());
 
-        return response()->json($user);
+        return response()->json([
+            'message' => 'Usuário criado com sucesso!',
+            'user' => $user
+        ], 200);
     }
 
     public function show($id)
@@ -36,7 +42,7 @@ class UserController extends Controller
         $user = User::findOrFail($id);
 
         if(!$user) {
-            return response()->json(['message' => 'Usuário não encontrado!']);
+            return response()->json(['message' => 'Usuário não encontrado!'], 404);
         }
 
         return response()->json($user);
@@ -47,11 +53,14 @@ class UserController extends Controller
         $user = User::findOrFail($id);
 
         if(!$user) {
-            return response()->json(['message' => 'Usuário não encontrado!']);
+            return response()->json(['message' => 'Usuário não encontrado!'], 404);
         }
 
         $user->update($request->all());
-        return response()->json($user);
+        return response()->json([
+            'message' => 'Usuário atualizado com sucesso!',
+            'user' => $user
+        ], 200);
     }
 
     public function destroy($id)
@@ -59,10 +68,10 @@ class UserController extends Controller
         $user = User::findOrFail($id);
 
         if(!$user) {
-            return response()->json(['message' => 'Usuário não encontrado!']);
+            return response()->json(['message' => 'Usuário não encontrado!'], 404);
         }
 
         $user->delete();
-        return response()->json(['message' => 'Usuário deletado com sucesso!']);
+        return response()->json(['message' => 'Usuário deletado com sucesso!'], 200);
     }
 }
