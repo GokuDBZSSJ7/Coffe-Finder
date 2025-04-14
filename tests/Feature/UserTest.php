@@ -29,7 +29,24 @@ class UserTest extends TestCase
             'name' => 'Lucas Baggio',
             'role' => 'client'
         ]);
-    } 
+    }
+
+    /** @test */
+    public function user_can_be_updated()
+    {
+        $user = User::create([
+            'name' => 'Lucas Baggio',
+            'email' => 'lucas@gmail.com',
+            'password' => bcrypt('12345678'),
+            'role' => 'client',
+        ]);
+
+        $response = $this->putJson('/api/users/' . $user->id, [
+            'name' => 'Baggio Lucas'
+        ]);
+
+        $response->assertStatus(200);
+    }
 
     /** @test */
     public function users_can_be_found()
@@ -59,5 +76,19 @@ class UserTest extends TestCase
             'email' => 'lucas@gmail.com',
             'role' => 'client',
         ]);
+    }
+
+    /** @test */
+    public function user_can_be_deleted()
+    {
+        $user = User::create([
+            'name' => 'Lucas Baggio',
+            'email' => 'lucas@gmail.com',
+            'password' => bcrypt('12345678'),
+            'role' => 'client',
+        ]);
+
+        $response = $this->deleteJson('/api/users/' . $user->id);
+        $response->assertStatus(200);
     }
 }
