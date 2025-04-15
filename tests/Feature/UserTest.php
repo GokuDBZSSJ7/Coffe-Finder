@@ -22,7 +22,7 @@ class UserTest extends TestCase
             'role' => 'client'
         ]);
 
-        $response->assertStatus(200);
+        $response->assertStatus(201);
 
         $this->assertDatabaseHas('users', [
             'email' => 'lucas@gmail.com',
